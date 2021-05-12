@@ -25,12 +25,16 @@
     "jshint-stylish": "^2.1.0",
     "webpack": "^1.12.9"
   },
+  "resolutions": {
+    "graceful-fs": "^4.2.4"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/nuysoft/Mock.git"
   },
   "main": "./dist/mock.js",
   "scripts": {
+    "build": "gulp webpack",
     "test": "gulp mocha",
     "coveralls": "gulp coveralls"
   },

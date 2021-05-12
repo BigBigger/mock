@@ -8381,19 +8381,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            that.readyState = MockXMLHttpRequest.LOADING
 	            that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
 
-	            that.status = 200
-	            that.statusText = HTTP_STATUS_CODES[200]
+	            that.status = that.custom.options.status || 200
+	            that.statusText = HTTP_STATUS_CODES[that.status]
 
-	            // fix #92 #93 by @qddegtya
-	            that.response = that.responseText = JSON.stringify(
-	                convert(that.custom.template, that.custom.options),
-	                null, 4
-	            )
+	            var _response = convert(that.custom.template, that.custom.options);
 
-	            that.readyState = MockXMLHttpRequest.DONE
-	            that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
-	            that.dispatchEvent(new Event('load' /*, false, false, that*/ ));
-	            that.dispatchEvent(new Event('loadend' /*, false, false, that*/ ));
+	            try {
+	                if (_response instanceof Promise) {
+	                    _response.then(function (res) {
+	                        _resolve(res)
+	                    })
+	                } else {
+	                    _resolve(_response)
+	                }
+	            } catch (err) {
+	                _resolve(_response)
+	            }
+
+	            function _resolve(res) {
+	                // fix #92 #93 by @qddegtya
+	                that.response = that.responseText = JSON.stringify(res, null, 4)
+
+	                that.readyState = MockXMLHttpRequest.DONE
+	                that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
+	                that.dispatchEvent(new Event('load' /*, false, false, that*/ ));
+	                that.dispatchEvent(new Event('loadend' /*, false, false, that*/ ));
+	            }
 	        }
 	    },
 	    // https://xhr.spec.whatwg.org/#the-abort()-method
@@ -8531,8 +8544,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	// 数据模板 ＝> 响应数据
 	function convert(item, options) {
-	    return Util.isFunction(item.template) ?
-	        item.template(options) : MockXMLHttpRequest.Mock.mock(item.template)
+	    if (Util.isFunction(item.template)) {
+	        var data = item.template(options)
+	        // 数据模板中的返回参构造处理
+	        // _status 控制返回状态码
+	        data._status && data._status !== 0 && (options.status = data._status)
+	        delete data._status
+	        return data
+	    }
+	    return MockXMLHttpRequest.Mock.mock(item.template)
 	}
 
 	module.exports = MockXMLHttpRequest
