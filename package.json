@@ -1,8 +1,8 @@
 {
-  "name": "mockjs",
+  "name": "mockjs-async-function",
   "title": "Mock.js",
   "description": "生成随机数据 & 拦截 Ajax 请求",
-  "version": "1.0.1-beta3",
+  "version": "1.0.0",
   "homepage": "http://mockjs.com/",
   "keywords": [
     "mock",
@@ -49,5 +49,12 @@
   ],
   "spm": {
     "main": "dist/mock.js"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/nuysoft/Mock/issues"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "license": "ISC"
 }
