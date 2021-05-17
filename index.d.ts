@@ -1,7 +1,7 @@
 /*
  * @Author       : XiaoLei
  * @Date         : 2021-05-13 14:41:10
- * @LastEditTime : 2021-05-17 15:40:22
+ * @LastEditTime : 2021-05-17 16:09:32
  * @LastEditors  : XiaoLei
  */
 interface AnyObject {
@@ -450,4 +450,6 @@ export declare interface Mock {
   readonly _mocked: MockMocked;
 }
 
-export default Mock;
+declare const _Mock: Mock;
+
+export default _Mock;
