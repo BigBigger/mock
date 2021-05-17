@@ -18,13 +18,13 @@ module.exports = {
     // 返回一个随机的自然数（大于等于 0 的整数）。
     natural: function(min, max) {
         min = typeof min !== 'undefined' ? parseInt(min, 10) : 0
-        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740992 // 2^53
+        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740991 // 2^53
         return Math.round(Math.random() * (max - min)) + min
     },
     // 返回一个随机的整数。
     integer: function(min, max) {
-        min = typeof min !== 'undefined' ? parseInt(min, 10) : -9007199254740992
-        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740992 // 2^53
+        min = typeof min !== 'undefined' ? parseInt(min, 10) : -9007199254740991
+        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740991 // 2^53
         return Math.round(Math.random() * (max - min)) + min
     },
     int: function(min, max) {
