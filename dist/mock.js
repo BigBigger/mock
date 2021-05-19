@@ -777,7 +777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Util.each('String Object Array RegExp Function'.split(' '), function(value) {
 	    Util['is' + value] = function(obj) {
-	        return Util.type(obj) === value.toLowerCase()
+	        return Util.type(obj).indexOf(value.toLowerCase()) > -1
 	    }
 	})
 
@@ -8381,12 +8381,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            that.readyState = MockXMLHttpRequest.LOADING
 	            that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
 
-	            that.status = that.custom.options.status || 200
-	            that.statusText = HTTP_STATUS_CODES[that.status]
-
 	            convert(that.custom.template, that.custom.options, function(res) {
 	                // fix #92 #93 by @qddegtya
 	                that.response = that.responseText = JSON.stringify(res, null, 4)
+
+	                that.status = that.custom.options.status || 200
+	                that.statusText = HTTP_STATUS_CODES[that.status]
 
 	                that.readyState = MockXMLHttpRequest.DONE
 	                that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
@@ -8535,12 +8535,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var data = item.template(options)
 	        // 数据模板中的返回参构造处理
 	        // _status 控制返回状态码
-	        if (data.then)
-	         data.then(function(res) {
-	            res._status && res._status !== 0 && (options.status = res._status)
-	            delete res._status
-	            callback(res);
-	         })
+	        if (data.then) {
+	            data.then(function(res) {
+	                res._status && res._status !== 0 && (options.status = res._status)
+	                delete res._status
+	                callback(res)
+	            })
+	            return
+	        }
+	        callback(data)
 	    }
 	    callback(MockXMLHttpRequest.Mock.mock(item.template))
 	}

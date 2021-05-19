@@ -62,7 +62,7 @@ Util.type = function type(obj) {
 
 Util.each('String Object Array RegExp Function'.split(' '), function(value) {
     Util['is' + value] = function(obj) {
-        return Util.type(obj) === value.toLowerCase()
+        return Util.type(obj).indexOf(value.toLowerCase()) > -1
     }
 })
 
