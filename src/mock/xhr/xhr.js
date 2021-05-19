@@ -288,21 +288,7 @@ Util.extend(MockXMLHttpRequest.prototype, {
             that.status = that.custom.options.status || 200
             that.statusText = HTTP_STATUS_CODES[that.status]
 
-            var _response = convert(that.custom.template, that.custom.options);
-
-            try {
-                if (_response instanceof Promise) {
-                    _response.then(function (res) {
-                        _resolve(res)
-                    })
-                } else {
-                    _resolve(_response)
-                }
-            } catch (err) {
-                _resolve(_response)
-            }
-
-            function _resolve(res) {
+            convert(that.custom.template, that.custom.options, function(res) {
                 // fix #92 #93 by @qddegtya
                 that.response = that.responseText = JSON.stringify(res, null, 4)
 
@@ -310,7 +296,8 @@ Util.extend(MockXMLHttpRequest.prototype, {
                 that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
                 that.dispatchEvent(new Event('load' /*, false, false, that*/ ));
                 that.dispatchEvent(new Event('loadend' /*, false, false, that*/ ));
-            }
+            })
+
         }
     },
     // https://xhr.spec.whatwg.org/#the-abort()-method
@@ -447,16 +434,19 @@ function find(options) {
 }
 
 // 数据模板 ＝> 响应数据
-function convert(item, options) {
+function convert(item, options, callback) {
     if (Util.isFunction(item.template)) {
         var data = item.template(options)
         // 数据模板中的返回参构造处理
         // _status 控制返回状态码
-        data._status && data._status !== 0 && (options.status = data._status)
-        delete data._status
-        return data
+        if (data.then)
+         data.then(function(res) {
+            res._status && res._status !== 0 && (options.status = res._status)
+            delete res._status
+            callback(res);
+         })
     }
-    return MockXMLHttpRequest.Mock.mock(item.template)
+    callback(MockXMLHttpRequest.Mock.mock(item.template))
 }
 
 module.exports = MockXMLHttpRequest

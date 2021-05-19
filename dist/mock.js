@@ -969,13 +969,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // 返回一个随机的自然数（大于等于 0 的整数）。
 	    natural: function(min, max) {
 	        min = typeof min !== 'undefined' ? parseInt(min, 10) : 0
-	        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740992 // 2^53
+	        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740991 // 2^53
 	        return Math.round(Math.random() * (max - min)) + min
 	    },
 	    // 返回一个随机的整数。
 	    integer: function(min, max) {
-	        min = typeof min !== 'undefined' ? parseInt(min, 10) : -9007199254740992
-	        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740992 // 2^53
+	        min = typeof min !== 'undefined' ? parseInt(min, 10) : -9007199254740991
+	        max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740991 // 2^53
 	        return Math.round(Math.random() * (max - min)) + min
 	    },
 	    int: function(min, max) {
@@ -8384,21 +8384,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            that.status = that.custom.options.status || 200
 	            that.statusText = HTTP_STATUS_CODES[that.status]
 
-	            var _response = convert(that.custom.template, that.custom.options);
-
-	            try {
-	                if (_response instanceof Promise) {
-	                    _response.then(function (res) {
-	                        _resolve(res)
-	                    })
-	                } else {
-	                    _resolve(_response)
-	                }
-	            } catch (err) {
-	                _resolve(_response)
-	            }
-
-	            function _resolve(res) {
+	            convert(that.custom.template, that.custom.options, function(res) {
 	                // fix #92 #93 by @qddegtya
 	                that.response = that.responseText = JSON.stringify(res, null, 4)
 
@@ -8406,7 +8392,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
 	                that.dispatchEvent(new Event('load' /*, false, false, that*/ ));
 	                that.dispatchEvent(new Event('loadend' /*, false, false, that*/ ));
-	            }
+	            })
+
 	        }
 	    },
 	    // https://xhr.spec.whatwg.org/#the-abort()-method
@@ -8543,16 +8530,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	// 数据模板 ＝> 响应数据
-	function convert(item, options) {
+	function convert(item, options, callback) {
 	    if (Util.isFunction(item.template)) {
 	        var data = item.template(options)
 	        // 数据模板中的返回参构造处理
 	        // _status 控制返回状态码
-	        data._status && data._status !== 0 && (options.status = data._status)
-	        delete data._status
-	        return data
+	        if (data.then)
+	         data.then(function(res) {
+	            res._status && res._status !== 0 && (options.status = res._status)
+	            delete res._status
+	            callback(res);
+	         })
 	    }
-	    return MockXMLHttpRequest.Mock.mock(item.template)
+	    callback(MockXMLHttpRequest.Mock.mock(item.template))
 	}
 
 	module.exports = MockXMLHttpRequest
