@@ -1,7 +1,7 @@
 /*
  * @Author       : XiaoLei
  * @Date         : 2021-05-13 14:41:10
- * @LastEditTime : 2021-05-17 16:09:32
+ * @LastEditTime : 2021-05-19 16:26:08
  * @LastEditors  : XiaoLei
  */
 interface AnyObject {
@@ -433,11 +433,11 @@ export declare interface Mock {
   // 配置拦截 Ajax 请求时的行为。支持的配置项有：timeout
   setup(setting: MockSetupSetting): MockSetupSetting;
   // 根据数据模板生成模拟数据。
-  mock<T>(template: T): T;
+  mock(template: any): any;
   // 记录数据模板。当拦截到匹配 rurl 的 Ajax 请求时，将根据数据模板 template 生成模拟数据，并作为响应数据返回。
-  mock(rurl: string, template: MockTemplate): Mock;
+  mock(rurl: string | RegExp, template: MockTemplate): Mock;
   // 记录数据模板。当拦截到匹配 rurl 和 rtype 的 Ajax 请求时，将根据数据模板 template 生成模拟数据，并作为响应数据返回。
-  mock(rurl: string, rtype: string, template: MockTemplate): Mock;
+  mock(rurl: string | RegExp, rtype: string, template: MockTemplate): Mock;
 
   valid(template: MockTemplate, data: any): boolean;
 
