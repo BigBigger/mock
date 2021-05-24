@@ -1,7 +1,7 @@
 /*
  * @Author       : XiaoLei
  * @Date         : 2021-05-13 14:41:10
- * @LastEditTime : 2021-05-19 16:26:08
+ * @LastEditTime : 2021-05-24 11:06:04
  * @LastEditors  : XiaoLei
  */
 interface AnyObject {
@@ -429,6 +429,14 @@ export interface MockJSONSchema {
   template: MockTemplate;
 }
 
+interface MockToJSONSchema{
+  (template: MockTemplate, data: any): MockJSONSchema
+}
+
+interface MockValid{
+  (template: MockTemplate, data: any): boolean
+}
+
 export declare interface Mock {
   // 配置拦截 Ajax 请求时的行为。支持的配置项有：timeout
   setup(setting: MockSetupSetting): MockSetupSetting;
@@ -439,10 +447,10 @@ export declare interface Mock {
   // 记录数据模板。当拦截到匹配 rurl 和 rtype 的 Ajax 请求时，将根据数据模板 template 生成模拟数据，并作为响应数据返回。
   mock(rurl: string | RegExp, rtype: string, template: MockTemplate): Mock;
 
-  valid(template: MockTemplate, data: any): boolean;
+  valid: MockValid;
 
   // 把 Mock.js 风格的数据模板 template 转换成 JSON Schema。
-  toJSONSchema(template: MockTemplate, data: any): MockJSONSchema;
+  toJSONSchema: MockToJSONSchema;
 
   Random: MockRandoml;
 
@@ -453,3 +461,13 @@ export declare interface Mock {
 declare const _Mock: Mock;
 
 export default _Mock;
+
+declare const Random: MockRandoml;
+declare const toJSONSchema: MockToJSONSchema;
+declare const valid: MockValid;
+
+export {
+  Random,
+  valid,
+  toJSONSchema,
+}

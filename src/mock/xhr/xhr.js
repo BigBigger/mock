@@ -440,9 +440,11 @@ function convert(item, options, callback) {
         // 数据模板中的返回参构造处理
         // _status 控制返回状态码
         if (data.then) {
-            data.then(function(res) {
-                res._status && res._status !== 0 && (options.status = res._status)
-                delete res._status
+            data.then(function(res = '') {
+                if (res) {
+                    res._status && res._status !== 0 && (options.status = res._status)
+                    delete res._status
+                }
                 callback(res)
             })
             return
